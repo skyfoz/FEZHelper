@@ -1,2 +1,2 @@
 # FEZHelper
-Replace with your mod's readme!
+A Celeste mod adding the FEZ's main mechanic.
