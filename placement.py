@@ -1,5 +1,4 @@
 import requests
-
 import os
 from pyvox.models import Vox
 from pyvox.parser import VoxParser
@@ -90,6 +89,27 @@ fezCenter = {
 
 entitiesNode["children"].append(fezCenter)
 print(f"Added refill with id {newId}.")
+
+choice = -1
+
+print("\n----------------------------------------\n")
+
+while choice not in [0, 1]:
+    print("\nWhere do you want to save the new map?")
+    print("0. Overwrite existing map")
+    print("1. Save as new file")
+    choice = int(input("Enter your choice: "))
+if choice == 0:
+    OUTPUT_BIN = INPUT_BIN
+elif choice == 1:
+    dialog = wx.FileDialog(None, "Save new map as", "", "", "*.bin", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+
+    if dialog.ShowModal() == wx.ID_OK:
+        OUTPUT_BIN = dialog.GetPath()
+
+    dialog.Destroy()
+else:
+    print("Invalid choice. Please try again.")
 
 print("Sending JSON back to get new encoded map")
 resp = requests.post(JSON_TO_BIN, json=mapJson)
