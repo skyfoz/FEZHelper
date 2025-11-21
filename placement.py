@@ -20,6 +20,8 @@ if choice == "0":
     print("Exiting...")
     os._exit(0)
 
+
+
 print("\n----------------------------------------\n")
 print("Please select the map BIN file to modify.")
 
@@ -89,6 +91,33 @@ fezCenter = {
 
 entitiesNode["children"].append(fezCenter)
 print(f"Added refill with id {newId}.")
+
+
+print("\n----------------------------------------\n")
+
+
+choice = -1
+
+while choice not in [0, 1]:
+    print("\nDo you want to add another FEZ pillar?")
+    print("0. No, save and quit")
+    print("1. Yes")
+    choice = int(input("Enter your choice: "))
+    # TODO: changer la room
+    if choice == 1:
+        newId += 1
+        fezCenter = {
+            "name": "FEZHelper/fezCenter",
+            "attributes": {
+                "x": 2 * 8,
+                "y": 2 * 8,
+                "id": newId
+            },
+            "children": []
+        }
+        entitiesNode["children"].append(fezCenter)
+        print(f"Added refill with id {newId}.")
+
 
 choice = -1
 
