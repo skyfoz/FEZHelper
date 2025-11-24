@@ -5,6 +5,13 @@ from midvoxio.voxio import vox_to_arr
 import midvoxio.voxio as voxio
 import numpy as np
 
+def roomSelection():
+    pass
+
+def voxSelection():
+    pass
+
+
 BIN_TO_JSON = "https://maddie480.ovh/celeste/bin-to-json"
 JSON_TO_BIN = "https://maddie480.ovh/celeste/json-to-bin"
 
@@ -12,7 +19,6 @@ print("Celeste FEZ Pillar Placer")
 print("----------------------------------------\n")
 print("0. Quit")
 print("1. Place FEZ pillar in map")
-
 
 
 choice = input("\nEnter your choice: ")
@@ -59,7 +65,6 @@ if dialog.ShowModal() == wx.ID_OK:
 dialog.Destroy()
 
 print(vox_to_arr(binVoxPath))
-voxio.viz_vox(binVoxPath)
 
 print("\n----------------------------------------\n")
 
@@ -118,8 +123,11 @@ while choice not in [0, 1]:
     print("0. No, save and quit")
     print("1. Yes")
     choice = int(input("Enter your choice: "))
-    # TODO: changer la room
+    
     if choice == 1:
+        print("In the same room ?")
+        print("0. No, select another room")
+        print("1. Yes")
         newId += 1
         fezCenter = {
             "name": "FEZHelper/fezCenter",
@@ -139,21 +147,21 @@ choice = -1
 print("\n----------------------------------------\n")
 
 while choice not in [0, 1]:
-    print("\nWhere do you want to save the new map?")
+    print("\nSAVE OPTIONS:")
     print("0. Overwrite existing map")
     print("1. Save as new file")
     choice = int(input("Enter your choice: "))
-if choice == 0:
-    OUTPUT_BIN = INPUT_BIN
-elif choice == 1:
-    dialog = wx.FileDialog(None, "Save new map as", "", "", "*.bin", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
+    if choice == 0:
+        OUTPUT_BIN = INPUT_BIN
+    elif choice == 1:
+        dialog = wx.FileDialog(None, "Save new map as", "", "", "*.bin", wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
 
-    if dialog.ShowModal() == wx.ID_OK:
-        OUTPUT_BIN = dialog.GetPath()
+        if dialog.ShowModal() == wx.ID_OK:
+            OUTPUT_BIN = dialog.GetPath()
 
-    dialog.Destroy()
-else:
-    print("Invalid choice. Please try again.")
+        dialog.Destroy()
+    else:
+        print("Invalid choice. Please try again.")
 
 print("Sending JSON back to get new encoded map")
 resp = requests.post(JSON_TO_BIN, json=mapJson)
@@ -162,3 +170,9 @@ with open(OUTPUT_BIN, "wb") as f:
     f.write(resp.content)
 
 print("Done! New map saved as:", OUTPUT_BIN)
+
+
+
+
+def main():
+    pass
