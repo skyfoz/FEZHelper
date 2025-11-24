@@ -1,8 +1,9 @@
 import requests
 import os
-from pyvox.models import Vox
-from pyvox.parser import VoxParser
 import wx
+from midvoxio.voxio import vox_to_arr
+import midvoxio.voxio as voxio
+import numpy as np
 
 BIN_TO_JSON = "https://maddie480.ovh/celeste/bin-to-json"
 JSON_TO_BIN = "https://maddie480.ovh/celeste/json-to-bin"
@@ -12,6 +13,8 @@ print("----------------------------------------\n")
 print("0. Quit")
 print("1. Place FEZ pillar in map")
 
+
+
 choice = input("\nEnter your choice: ")
 while choice not in ["0", "1"]:
     print("Invalid choice. Please try again.")
@@ -19,7 +22,6 @@ while choice not in ["0", "1"]:
 if choice == "0":
     print("Exiting...")
     os._exit(0)
-
 
 
 print("\n----------------------------------------\n")
@@ -33,7 +35,6 @@ dialog = wx.FileDialog(None, "Choose a map", "", "", "*.bin", wx.FD_OPEN)
 
 if dialog.ShowModal() == wx.ID_OK:
     INPUT_BIN = dialog.GetPath()
-
 dialog.Destroy()
 
 print(f"Selected map: {INPUT_BIN}")
@@ -45,6 +46,20 @@ with open(INPUT_BIN, "rb") as f:
 
 print("BIN converted to JSON")
 
+
+print("\n----------------------------------------\n")
+
+
+print("Select a .vox file to add your FEZ pillar model.")
+binVoxPath = ""
+dialog = wx.FileDialog(None, "Choose a .vox file", "", "", "*.vox", wx.FD_OPEN)
+
+if dialog.ShowModal() == wx.ID_OK:
+    binVoxPath = dialog.GetPath()
+dialog.Destroy()
+
+print(vox_to_arr(binVoxPath))
+voxio.viz_vox(binVoxPath)
 
 print("\n----------------------------------------\n")
 
