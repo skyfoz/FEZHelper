@@ -49,7 +49,7 @@ def selectBinFile():
 def selectVoxFile():
     print("\n----------------------------------------\n")
     print("Select a .vox file to add your FEZ pillar model.")
-    
+    app = wx.App(False)
     dialog = wx.FileDialog(None, "Choose a .vox file", "", "", "*.vox", wx.FD_OPEN)
     
     binVoxPath = ""
@@ -60,10 +60,25 @@ def selectVoxFile():
     voxArray = vox_to_arr(binVoxPath)
     print(voxArray)
     sideSize = (max(voxArray.shape[0], voxArray.shape[1]), voxArray.shape[2])
-    
-    sides = [[["" for _ in range(sideSize[1])] for _ in range(sideSize[0])] for _ in range(4)]
+
     
     return binVoxPath, voxArray, sideSize
+
+def getVoxelSides(voxArray, sideSize):
+    sides = [[ [None for _ in range(sideSize[1])] for _ in range(sideSize[0])] for _ in range(4)]
+    
+    depth = voxArray.shape[2]
+    
+    for y in range(voxArray.shape[1]):
+        for z in range(depth - 1, -1, -1):
+            for x in range(voxArray.shape[0]):
+                row = (depth - 1) - z
+                if sides[0][row][x] is None or sides[0][row][x][3] == 0:
+                    sides[0][row][x] = voxArray[x, y, z]
+    
+    print("Front side:")
+    print(np.array(sides[0]))
+    return sides
 
 
 def selectRoom(mapJson):
@@ -189,6 +204,7 @@ def main():
         inputBin, mapJson = selectBinFile()
 
         binVoxPath, voxArray, sideSize = selectVoxFile()
+        voxelSides = getVoxelSides(voxArray, sideSize)
 
         selectedRoom, roomNames = selectRoom(mapJson)
 
