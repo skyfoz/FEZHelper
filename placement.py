@@ -65,19 +65,40 @@ def selectVoxFile():
     return binVoxPath, voxArray, sideSize
 
 def getVoxelSides(voxArray, sideSize):
-    sides = [[ [None for _ in range(sideSize[1])] for _ in range(sideSize[0])] for _ in range(4)]
-    
+    sides = [[[None for _ in range(sideSize[1])] for _ in range(sideSize[0])] for _ in range(4)]
     depth = voxArray.shape[2]
-    
+
+    # Front side
     for y in range(voxArray.shape[1]):
         for z in range(depth - 1, -1, -1):
+            row = (depth - 1) - z
             for x in range(voxArray.shape[0]):
-                row = (depth - 1) - z
                 if sides[0][row][x] is None or sides[0][row][x][3] == 0:
                     sides[0][row][x] = voxArray[x, y, z]
     
-    print("Front side:")
-    print(np.array(sides[0]))
+    # Right side
+    for x in range(voxArray.shape[0] - 1, -1, -1):
+        for z in range(depth - 1, -1, -1):
+            row = (depth - 1) - z
+            for y in range(voxArray.shape[1]):
+                if sides[1][row][y] is None or sides[1][row][y][3] == 0:
+                    sides[1][row][y] = voxArray[x, y, z]
+
+    # Back side
+    for y in range(voxArray.shape[1] -1, -1, -1):
+        for z in range(depth - 1, -1, -1):
+            row = (depth - 1) - z
+            for x in range(voxArray.shape[0]):
+                if sides[2][row][x] is None or sides[2][row][x][3] == 0:
+                    sides[2][row][x] = voxArray[x, y, z]
+    
+    # Left side
+    for x in range(voxArray.shape[0]):
+        for z in range(depth - 1, -1, -1):
+            row = (depth - 1) - z
+            for y in range(voxArray.shape[1]):
+                if sides[3][row][y] is None or sides[3][row][y][3] == 0:
+                    sides[3][row][y] = voxArray[x, y, z]
     return sides
 
 
