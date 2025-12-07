@@ -67,7 +67,11 @@ def selectVoxFile():
 def getVoxelSides(voxArray, sideSize):
     sides = [[[None for _ in range(sideSize[1])] for _ in range(sideSize[0])] for _ in range(4)]
     depth = voxArray.shape[2]
-
+    # We assume a specific palette is used for the FEZ pillar | full black is the FezCenter (0, 0, 0, 1)
+    # If there is multiple or no FezCenter, return an error
+    fezPositions = [None for _ in range(4)]
+    fezFirstFront = None
+    
     # Front side
     for y in range(voxArray.shape[1]):
         for z in range(depth - 1, -1, -1):
@@ -75,7 +79,18 @@ def getVoxelSides(voxArray, sideSize):
             for x in range(voxArray.shape[0]):
                 if sides[0][row][x] is None or sides[0][row][x][3] == 0:
                     sides[0][row][x] = voxArray[x, y, z]
+                if voxArray[x, y, z] == (0, 0, 0, 1):
+                    if fezFirstFront is None:
+                        fezFirstFront = (x, y, z)
+                    else:
+                        print("Error: Multiple FEZ center voxels found in the model.")
+                        return None
+                    fezPositions[0] = (x, y, z)
     
+    if fezFirstFront is None:
+        print("Error: No FEZ center voxel found in the model.")
+        return None
+
     # Right side
     for x in range(voxArray.shape[0] - 1, -1, -1):
         for z in range(depth - 1, -1, -1):
@@ -226,6 +241,10 @@ def main():
 
         binVoxPath, voxArray, sideSize = selectVoxFile()
         voxelSides = getVoxelSides(voxArray, sideSize)
+        while voxelSides is None:
+            print("Please select another .vox file.")
+            binVoxPath, voxArray, sideSize = selectVoxFile()
+            voxelSides = getVoxelSides(voxArray, sideSize)
 
         selectedRoom, roomNames = selectRoom(mapJson)
 
