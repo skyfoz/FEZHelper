@@ -81,11 +81,11 @@ def getVoxelSides(voxArray, sideSize):
                     sides[0][row][x] = voxArray[x, y, z]
                 if voxArray[x, y, z] == (0, 0, 0, 1):
                     if fezFirstFront is None:
-                        fezFirstFront = (x, y, z)
+                        fezFirstFront = (x, row)
+                        fezPositions[0] = fezFirstFront
                     else:
                         print("Error: Multiple FEZ center voxels found in the model.")
                         return None
-                    fezPositions[0] = (x, y, z)
     
     if fezFirstFront is None:
         print("Error: No FEZ center voxel found in the model.")
@@ -98,22 +98,29 @@ def getVoxelSides(voxArray, sideSize):
             for y in range(voxArray.shape[1]):
                 if sides[1][row][y] is None or sides[1][row][y][3] == 0:
                     sides[1][row][y] = voxArray[x, y, z]
+                if voxArray[x, y, z] == (0, 0, 0, 1):
+                    fezPositions[1] = (y, row)
 
     # Back side
     for y in range(voxArray.shape[1] -1, -1, -1):
         for z in range(depth - 1, -1, -1):
             row = (depth - 1) - z
-            for x in range(voxArray.shape[0]):
-                if sides[2][row][x] is None or sides[2][row][x][3] == 0:
-                    sides[2][row][x] = voxArray[x, y, z]
+            for x in range(voxArray.shape[0] - 1, -1, -1):
+                if sides[2][row][voxArray.shape[0] - x - 1] is None or sides[2][row][voxArray.shape[0] - x - 1][3] == 0:
+                    sides[2][row][voxArray.shape[0] - x - 1] = voxArray[x, y, z]
+                if voxArray[x, y, z] == (0, 0, 0, 1):
+                    fezPositions[2] = (voxArray.shape[0] - x - 1, row)
     
     # Left side
     for x in range(voxArray.shape[0]):
         for z in range(depth - 1, -1, -1):
             row = (depth - 1) - z
-            for y in range(voxArray.shape[1]):
-                if sides[3][row][y] is None or sides[3][row][y][3] == 0:
-                    sides[3][row][y] = voxArray[x, y, z]
+            for y in range(voxArray.shape[1] - 1, -1, -1):
+                if sides[3][row][voxArray.shape[1] - 1 - y] is None or sides[3][row][voxArray.shape[1] - 1 - y][3] == 0:
+                    sides[3][row][voxArray.shape[1] - 1 - y] = voxArray[x, y, z]
+                if voxArray[x, y, z] == (0, 0, 0, 1):
+                    fezPositions[3] = (voxArray.shape[1] - 1 - y, row)
+                
     return sides
 
 
