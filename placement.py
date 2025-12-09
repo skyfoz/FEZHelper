@@ -120,7 +120,7 @@ def getVoxelSides(voxArray, sideSize):
                     sides[3][row][voxArray.shape[1] - 1 - y] = voxArray[x, y, z]
                 if voxArray[x, y, z] == (0, 0, 0, 1):
                     fezPositions[3] = (voxArray.shape[1] - 1 - y, row)
-                
+    
     return sides
 
 
@@ -176,28 +176,40 @@ def createFezCenter(newId):
     }
 
 
-def addPillarsLoop(entitiesNode, newId):
-    while True:
+def addPillarsLoop(entitiesNode, newId, mapJson):
+    choice = None
+    while choice != 0:
         print("\nDo you want to add another FEZ pillar?")
         print("0. No, save and quit")
         print("1. Yes")
         choice = int(input("Enter your choice: "))
         
         if choice == 1:
-            print("In the same room ?")
+            sameRoomChoice = None
+            print("\nIn the same room ?")
             print("0. No, select another room")
             print("1. Yes")
             sameRoomChoice = int(input("Enter your choice: "))
-            
+
+            while sameRoomChoice not in [0, 1]:
+                print("Invalid choice. Please try again.")
+                sameRoomChoice = int(input("Enter your choice: "))
+
+
             newId += 1
             fezCenter = createFezCenter(newId)
-            entitiesNode["children"].append(fezCenter)
-            print(f"Added refill with id {newId}.")
-        elif choice == 0:
-            break
-        else:
+
+            if sameRoomChoice == 1:
+                
+                entitiesNode["children"].append(fezCenter)
+            elif sameRoomChoice == 0:
+
+                selectedRoom, roomNames = selectRoom(mapJson)
+                entitiesNode = getEntitiesNode(mapJson, roomNames, selectedRoom)
+                entitiesNode["children"].append(fezCenter)
+
+        elif choice != 0:
             print("Invalid choice. Please try again.")
-    
     return newId
 
 
@@ -264,7 +276,7 @@ def main():
         
         print("\n----------------------------------------\n")
 
-        newId = addPillarsLoop(entitiesNode, newId)
+        newId = addPillarsLoop(entitiesNode, newId, mapJson)
 
         outputBin = chooseSaveLocation(inputBin)
         saveMap(outputBin, mapJson)
